@@ -1,0 +1,5 @@
+auto main()
+{
+    print_line("Hello, world!");
+}
+

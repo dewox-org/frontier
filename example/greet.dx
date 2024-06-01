@@ -1,0 +1,15 @@
+auto main()
+{
+    auto name;
+    loop {
+        print("Who are you? ");
+        capture (@Scan_Line_Canceled) { recover ""; }
+        name = scan_line();
+        if (!name) continue;
+    }
+
+    print("Welcome, ");
+    print(name);
+    print_line("!");
+}
+
