@@ -1,11 +1,12 @@
 #pragma once
+#include "tool.hpp"
 
 namespace dewox::inline object
 {
     template <typename Object> concept can_drop = requires { &Object::drop; };
 
     template <typename Object, typename... Arguments>
-    constexpr auto create(auto (*into)(Object* result, Arguments...) -> void, Arguments... arguments) -> Object;
+    constexpr auto create(auto (*into)(Object* result, Arguments...) -> void, Self<Arguments>... arguments) -> Object;
 
     template <typename Object>
     constexpr auto drop(Object* opt_object) -> void;
@@ -14,7 +15,7 @@ namespace dewox::inline object
 namespace dewox::inline object
 {
     template <typename Object, typename... Arguments>
-    inline constexpr auto create(auto (*into)(Object* result, Arguments... arguments) -> void, Arguments... arguments) -> Object
+    inline constexpr auto create(auto (*into)(Object* result, Arguments... arguments) -> void, Self<Arguments>... arguments) -> Object
     {
         Object result;
         into(&result, arguments...);

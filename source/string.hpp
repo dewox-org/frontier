@@ -1,17 +1,21 @@
 #pragma once
 #include "type.hpp"
+#include "tool.hpp"
 #include "object.hpp"
 
 namespace dewox::inline string
 {
     struct String final
     {
+        /// [invariant] first <= last;
+
         char const* first;
         char const* last;
 
         static constexpr auto into(String* result, char const* first, char const* last) -> void;
+        static constexpr auto wild_into(String* result, char const* first, char const* last) -> void;
         static constexpr auto size_into(String* result, char const* first, Size size) -> void;
-        static auto item_into(String* result, auto* item) -> void;
+        static auto item_into(String* result, auto const* item) -> void;
 
         constexpr auto begin() -> char const*;
         constexpr auto end() -> char const*;
@@ -19,18 +23,26 @@ namespace dewox::inline string
         constexpr auto byte_count() -> Size;
         constexpr explicit operator bool ();
 
+        constexpr auto prefix(Size byte_count_after_first_to_keep = {}) -> String;
+        constexpr auto suffix(Size byte_count_before_last_to_keep = {}) -> String;
+        constexpr auto skip(Size byte_count_after_first_to_skip = {}) -> String;
+        constexpr auto pop(Size byte_count_before_last_to_pop = {}) -> String;
+
+        constexpr auto copy(String source) -> String;   // -> written_string
+        constexpr auto fill(int a) -> String;           // -> filled_string
+
         // pattern = body? definition*;
         // definition = ":" <name:byte> body?;
         // body = sequence? branch*;
-        // branch = "/" sequence;
+        // branch = "|" sequence;
         // sequence = command+;
-        // command = "." | "~" <from:byte> <to:byte> | "@" <name:byte> | [^.~@:/]
-        auto match_prefix(String pattern) -> Size;
-        auto match_substring(String pattern) -> String;
+        // command = "~" <from:byte> <to:byte> | "@" <name:byte> | [^~@:|]
+        auto match(String pattern) -> Size;     // Returns the max byte count of the string prefix that matches the pattern.
+        auto search(String pattern) -> String;  // Returns the first longest substring that matches the pattern.
     };
 
-    constexpr auto operator == (String opt_a, String opt_b) -> bool;
-    constexpr auto operator != (String opt_a, String opt_b) -> bool;
+    constexpr auto operator == (String maybe_a, String maybe_b) -> bool;
+    constexpr auto operator != (String maybe_a, String maybe_b) -> bool;
 }
 
 namespace dewox::inline string::literal
@@ -47,39 +59,50 @@ namespace dewox::inline string
 {
     inline constexpr auto String::into(String* result, char const* first, char const* last) -> void
     {
+        wild_into(result, first, max(first, last));
+    }
+
+    inline constexpr auto String::wild_into(String* result, char const* first, char const* last) -> void
+    {
         result->first = first;
         result->last = last;
     }
 
     inline constexpr auto String::size_into(String* result, char const* first, Size size) -> void
     {
-        into(result, first, first + size);
+        wild_into(result, first, first + size);
     }
 
-    inline auto String::item_into(String* result, auto* item) -> void
+    inline auto String::item_into(String* result, auto const* item) -> void
     {
         size_into(result, (char const*) item, sizeof(*item));
     }
 
     inline constexpr auto String::begin() -> char const* { return first; }
     inline constexpr auto String::end() -> char const* { return last; }
-    inline constexpr auto String::byte_count() -> Size { return (last > first ? last - first : 0u); }
+    inline constexpr auto String::byte_count() -> Size { return Size(last - first); }
     inline constexpr String::operator bool () { return (last > first); }
 
-    inline constexpr auto operator == (String opt_a, String opt_b) -> bool
+    // NOTE: Pay attention to possible overflows!
+    inline constexpr auto String::prefix(Size byte_count_after_first_to_keep) -> String { return create(wild_into, first, first + min(byte_count_after_first_to_keep, byte_count())); }
+    inline constexpr auto String::suffix(Size byte_count_before_last_to_keep) -> String { return create(wild_into, last - min(byte_count_before_last_to_keep, byte_count()), last); }
+    inline constexpr auto String::skip(Size byte_count_after_first_to_skip) -> String { return create(wild_into, first + min(byte_count_after_first_to_skip, byte_count()), last); }
+    inline constexpr auto String::pop(Size byte_count_before_last_to_pop) -> String { return create(wild_into, first, last - min(byte_count_before_last_to_pop, byte_count())); }
+
+    inline constexpr auto operator == (String maybe_a, String maybe_b) -> bool
     {
-        if (opt_a.byte_count() != opt_b.byte_count()) return false;
-        while (opt_a.first < opt_a.last) {
-            if (*opt_a.first++ != *opt_b.first++) {
+        if (maybe_a.byte_count() != maybe_b.byte_count()) return false;
+        while (maybe_a.first < maybe_a.last) {
+            if (*maybe_a.first++ != *maybe_b.first++) {
                 return false;
             }
         }
         return true;
     }
 
-    inline constexpr auto operator != (String opt_a, String opt_b) -> bool
+    inline constexpr auto operator != (String maybe_a, String maybe_b) -> bool
     {
-        return !(opt_a == opt_b);
+        return !(maybe_a == maybe_b);
     }
 }
 

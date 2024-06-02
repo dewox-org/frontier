@@ -16,13 +16,20 @@ file(GLOB
     "${self}"
 )
 file(GLOB_RECURSE
+    dependencies
+    LIST_DIRECTORIES false
+    RELATIVE "${root}"
+    "${root}/*.hpp"
+    "${root}/*.inl"
+)
+file(GLOB_RECURSE
     sources
     LIST_DIRECTORIES false
     RELATIVE "${root}"
     "${root}/*.cpp"
 )
 set(build_id)
-foreach (build_source "${self}" ${sources})
+foreach (build_source "${self}" ${dependencies} ${sources})
     message("- ${build_source}")
 
     string(MD5 path_hash "${build_source}")
@@ -43,7 +50,7 @@ if (NOT EXISTS "${executable}")
     file(MAKE_DIRECTORY "${root}/${build_root}")
     file(MAKE_DIRECTORY "${root}/${build_object_root}")
     execute_process(
-        COMMAND "${compiler}" -std=c++20 -O3 -Wall -Wextra -fvisibility=hidden -fdiagnostics-color=always -o "${executable}" ${sources}
+        COMMAND "${compiler}" -std=c++20 -O3 -Wall -Wextra -Werror=return-type -Wno-unused-parameter -fvisibility=hidden -fdiagnostics-color=always -o "${executable}" ${sources}
         WORKING_DIRECTORY "${root}"
         COMMAND_ECHO STDOUT
         COMMAND_ERROR_IS_FATAL ANY
