@@ -4,6 +4,7 @@ namespace dewox::inline main
 {
     auto run() -> int
     {
+        filter_trace();
         auto pattern = "~AZ@a:a~AZ@@|"_s;
         auto how_pattern1 = "@a|@b:ahello:bworld"_s;
         auto how_pattern2 = "hello|world"_s;

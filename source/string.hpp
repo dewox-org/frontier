@@ -15,6 +15,7 @@ namespace dewox::inline string
         static constexpr auto into(String* result, char const* first, char const* last) -> void;
         static constexpr auto wild_into(String* result, char const* first, char const* last) -> void;
         static constexpr auto size_into(String* result, char const* first, Size size) -> void;
+        static constexpr auto until_into(String* result, char const* opt_string) -> void;
         static auto item_into(String* result, auto const* item) -> void;
 
         constexpr auto begin() -> char const*;
@@ -71,6 +72,16 @@ namespace dewox::inline string
     inline constexpr auto String::size_into(String* result, char const* first, Size size) -> void
     {
         wild_into(result, first, first + size);
+    }
+
+    inline constexpr auto String::until_into(String* result, char const* opt_string) -> void
+    {
+        if (auto string = opt_string) {
+            while (*string) string++;
+            wild_into(result, opt_string, string);
+        } else {
+            wild_into(result, nullptr, nullptr);
+        }
     }
 
     inline auto String::item_into(String* result, auto const* item) -> void
