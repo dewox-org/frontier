@@ -9,7 +9,7 @@ namespace dewox::inline object
     constexpr auto create(auto (*into)(Object* result, Arguments...) -> void, Self<Arguments>... arguments) -> Object;
 
     template <typename Object>
-    constexpr auto drop(Object* opt_object) -> void;
+    constexpr auto drop(Object* maybe_object) -> void;
 }
 
 namespace dewox::inline object
@@ -23,10 +23,10 @@ namespace dewox::inline object
     }
 
     template <typename Object>
-    inline constexpr auto drop(Object* opt_object) -> void
+    inline constexpr auto drop(Object* maybe_object) -> void
     {
         if constexpr (can_drop<Object>) {
-            if (auto object = opt_object) {
+            if (auto object = maybe_object) {
                 object->drop();
             } else {
                 // Silently ignore nullptr objects.

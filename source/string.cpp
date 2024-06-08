@@ -23,10 +23,10 @@ namespace dewox::inline string
         }
 
         // Return true if matched.
-        auto do_match(String* source, String pattern, char const* opt_subpattern = {}) -> bool
+        auto do_match(String* source, String pattern, char const* maybe_subpattern = {}) -> bool
         {
             trace("match-subpattern");
-            auto subpattern = (opt_subpattern ? opt_subpattern : pattern.begin());
+            auto subpattern = (maybe_subpattern ? maybe_subpattern : pattern.begin());
             auto command = subpattern;
             auto peek = source->begin();
             auto matched = true;

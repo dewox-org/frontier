@@ -5,10 +5,22 @@ message("Build Setup:")
 if (NOT DEFINED COMPILER)
     set(COMPILER "g++")
 endif ()
+set(build_root "build")
+set(build_cache_root "${build_root}/cache")
+file(MAKE_DIRECTORY "${root}/${build_root}")
+file(MAKE_DIRECTORY "${root}/${build_cache_root}")
 find_program(compiler NAMES "${COMPILER}")
+message("- Build: ${build_root}")
+message("- Build Cache: ${build_cache_root}")
 message("- Compiler: ${compiler} (${COMPILER})")
 
 message("Discovering...")
+file(GLOB_RECURSE
+    tests
+    LIST_DIRECTORIES false
+    RELATIVE "${root}"
+    "${root}/source/test-*.cpp"
+)
 file(GLOB
     self
     LIST_DIRECTORIES false
@@ -19,14 +31,14 @@ file(GLOB_RECURSE
     dependencies
     LIST_DIRECTORIES false
     RELATIVE "${root}"
-    "${root}/*.hpp"
-    "${root}/*.inl"
+    "${root}/source/*.hpp"
+    "${root}/source/*.inl"
 )
 file(GLOB_RECURSE
     sources
     LIST_DIRECTORIES false
     RELATIVE "${root}"
-    "${root}/*.cpp"
+    "${root}/source/*.cpp"
 )
 set(build_id)
 foreach (build_source "${self}" ${dependencies} ${sources})
@@ -42,19 +54,57 @@ string(MD5 build_id "${build_id}")
 string(SUBSTRING "${build_id}" 0 7 build_id)
 message("OK build ${build_id}.")
 
+message("Generating sites...")
+set(sites "${build_cache_root}/sites.${build_id}.cpp")
+set(site_tests_declaration)
+set(site_tests_reference)
+string(APPEND
+    site_tests_declaration
+    "namespace dewox::inline test\n"
+    "{\n"
+)
+foreach (test ${tests})
+    if ("${test}" MATCHES "/(test-[a-z0-9-]+)[.]cpp$")
+        set(test_name "${CMAKE_MATCH_1}")
+        string(REPLACE "-" "_" test_id "${test_name}")
+        message("- ${test}: ${test_id}")
+        string(APPEND site_tests_declaration "    extern \"C\" auto dewox_site_${test_id}(Test* test) -> void;\n")
+        string(APPEND site_tests_reference "        ::dewox::object::create(&Site::into, \"${test_name}\"_s, (void*) &::dewox::test::dewox_site_${test_id}),\n")
+    else ()
+        message("! ${test}: invalid test filename, ignored.")
+    endif ()
+endforeach ()
+string(APPEND
+    site_tests_declaration
+    "}\n"
+)
+file(WRITE
+    "${root}/${sites}"
+    "#include \"${root}/source/site.hpp\"\n"
+    "#include \"${root}/source/test.hpp\"\n"
+    "#include \"${root}/source/object.hpp\"\n"
+    "\n"
+    "${site_tests_declaration}"
+    "\n"
+    "namespace dewox::inline site\n"
+    "{\n"
+    "    Site dewox_sites[]{\n"
+    "${site_tests_reference}"
+    "        ::dewox::object::create(&Site::into, {}, {}),\n"
+    "    };\n"
+    "}\n"
+    "\n"
+)
+
 message("Building...")
-set(build_root "build")
-set(build_object_root "${build_root}/object")
-set(executable "${build_object_root}/${build_id}.exe")
+set(executable "${build_cache_root}/dewox.${build_id}.exe")
 if (NOT EXISTS "${executable}")
-    file(MAKE_DIRECTORY "${root}/${build_root}")
-    file(MAKE_DIRECTORY "${root}/${build_object_root}")
     execute_process(
-        COMMAND "${compiler}" -std=c++20 -O3 -Wall -Wextra -Werror=return-type -Wno-unused-parameter -fvisibility=hidden -fdiagnostics-color=always -o "${executable}" ${sources}
+        COMMAND "${compiler}" -std=c++20 -O3 -Wall -Wextra -Werror=return-type -Wno-unused-parameter -fvisibility=hidden -fdiagnostics-color=always -o "${executable}" ${sources} ${sites}
         WORKING_DIRECTORY "${root}"
         COMMAND_ECHO STDOUT
         COMMAND_ERROR_IS_FATAL ANY
     )
-    file(COPY_FILE "${root}/${executable}" "${root}/${build_root}/dewox" ONLY_IF_DIFFERENT)
 endif ()
+file(COPY_FILE "${root}/${executable}" "${root}/${build_root}/dewox" ONLY_IF_DIFFERENT)
 

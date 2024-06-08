@@ -15,7 +15,7 @@ namespace dewox::inline string
         static constexpr auto into(String* result, char const* first, char const* last) -> void;
         static constexpr auto wild_into(String* result, char const* first, char const* last) -> void;
         static constexpr auto size_into(String* result, char const* first, Size size) -> void;
-        static constexpr auto until_into(String* result, char const* opt_string) -> void;
+        static constexpr auto until_into(String* result, char const* maybe_string) -> void;
         static auto item_into(String* result, auto const* item) -> void;
 
         constexpr auto begin() -> char const*;
@@ -31,6 +31,9 @@ namespace dewox::inline string
 
         constexpr auto copy(String source) -> String;   // -> written_string
         constexpr auto fill(int a) -> String;           // -> filled_string
+
+        constexpr auto starts_with(String maybe_prefix) -> bool;
+        constexpr auto ends_with(String maybe_suffix) -> bool;
 
         // pattern = body? definition*;
         // definition = ":" <name:byte> body?;
@@ -74,11 +77,11 @@ namespace dewox::inline string
         wild_into(result, first, first + size);
     }
 
-    inline constexpr auto String::until_into(String* result, char const* opt_string) -> void
+    inline constexpr auto String::until_into(String* result, char const* maybe_string) -> void
     {
-        if (auto string = opt_string) {
+        if (auto string = maybe_string) {
             while (*string) string++;
-            wild_into(result, opt_string, string);
+            wild_into(result, maybe_string, string);
         } else {
             wild_into(result, nullptr, nullptr);
         }
@@ -99,6 +102,9 @@ namespace dewox::inline string
     inline constexpr auto String::suffix(Size byte_count_before_last_to_keep) -> String { return create(wild_into, last - min(byte_count_before_last_to_keep, byte_count()), last); }
     inline constexpr auto String::skip(Size byte_count_after_first_to_skip) -> String { return create(wild_into, first + min(byte_count_after_first_to_skip, byte_count()), last); }
     inline constexpr auto String::pop(Size byte_count_before_last_to_pop) -> String { return create(wild_into, first, last - min(byte_count_before_last_to_pop, byte_count())); }
+
+    inline constexpr auto String::starts_with(String maybe_prefix) -> bool { return (prefix(maybe_prefix.byte_count()) == maybe_prefix); }
+    inline constexpr auto String::ends_with(String maybe_suffix) -> bool { return (suffix(maybe_suffix.byte_count()) == maybe_suffix); }
 
     inline constexpr auto operator == (String maybe_a, String maybe_b) -> bool
     {
