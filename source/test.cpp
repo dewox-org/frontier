@@ -1,7 +1,7 @@
 #include "test.hpp"
 #include "tool.hpp"
 #include "site.hpp"
-#include <cstdio>
+#include "native.hpp"
 
 namespace dewox::inline test
 {
@@ -34,8 +34,8 @@ namespace dewox::inline test
         {
             auto data = (Standard_Test*) test->maybe_data;
             data->test_name = name;
-            std::fprintf(stderr, "[%*zu/%-*zu] Testing %s...\n", data->count_digit_count, data->passed_test_count + data->failed_test_count, data->count_digit_count, data->count, name);
-            std::fflush(stderr);
+            native::printf("[%*zu/%-*zu] Testing %s...\n", data->count_digit_count, data->passed_test_count + data->failed_test_count, data->count_digit_count, data->count, name);
+            native::flush();
             return true;
         }
 
@@ -46,7 +46,7 @@ namespace dewox::inline test
                 data->count++;
                 data->failed_test_count++;
                 data->count_digit_count = count_digits(data->count);
-                std::fprintf(stderr, "[%*zu/%-*zu] %s %s\n", data->count_digit_count, data->passed_test_count + data->failed_test_count, data->count_digit_count, data->count, "FAIL", "** unpaired finish() **");
+                native::printf("[%*zu/%-*zu] %s %s\n", data->count_digit_count, data->passed_test_count + data->failed_test_count, data->count_digit_count, data->count, "FAIL", "** unpaired finish() **");
                 return;
             }
             if (success) {
@@ -54,8 +54,8 @@ namespace dewox::inline test
             } else {
                 data->failed_test_count++;
             }
-            std::fprintf(stderr, "\e[F[%*zu/%-*zu] %s %s\e[K\n", data->count_digit_count, data->passed_test_count + data->failed_test_count, data->count_digit_count, data->count, (success ? " OK " : "FAIL"), data->test_name);
-            std::fflush(stderr);
+            native::printf("\e[F[%*zu/%-*zu] %s %s\e[K\n", data->count_digit_count, data->passed_test_count + data->failed_test_count, data->count_digit_count, data->count, (success ? " OK " : "FAIL"), data->test_name);
+            native::flush();
             data->test_name = {};
         }
     }
@@ -94,9 +94,9 @@ namespace dewox::inline test
 
     auto Standard_Test::report() -> void
     {
-        std::fprintf(stderr, " %*zu/%-*zu  %s %3d%%\n", count_digit_count, passed_test_count, count_digit_count, count, " OK ", (count > 0u ? int(100 * passed_test_count / count) : 100));
-        std::fprintf(stderr, " %*zu/%-*zu  %s %3d%%\n", count_digit_count, failed_test_count, count_digit_count, count, "FAIL", (count > 0u ? int(100 * failed_test_count / count) : 0));
-        std::fflush(stderr);
+        native::printf(" %*zu/%-*zu  %s %3d%%\n", count_digit_count, passed_test_count, count_digit_count, count, " OK ", (count > 0u ? int(100 * passed_test_count / count) : 100));
+        native::printf(" %*zu/%-*zu  %s %3d%%\n", count_digit_count, failed_test_count, count_digit_count, count, "FAIL", (count > 0u ? int(100 * failed_test_count / count) : 0));
+        native::flush();
     }
 
     auto run_tests_on(Test* test) -> void

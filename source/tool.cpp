@@ -1,7 +1,7 @@
 #include "tool.hpp"
 #include "object.hpp"
 #include "string.hpp"
-#include <cstdio>
+#include "native.hpp"
 
 namespace dewox::inline tool
 {
@@ -40,11 +40,11 @@ namespace dewox::inline tool
         auto line_digit_count = count_digits(line);
         if (line_alignment < line_digit_count) line_alignment = line_digit_count;
         if (auto message = maybe_message; message && message[0]) {
-            std::fprintf(stderr, "%s:%-*d (%s): %s\n", file, line_alignment, line, function, message);
+            native::printf("%s:%-*d (%s): %s\n", file, line_alignment, line, function, message);
         } else {
-            std::fprintf(stderr, "%s:%-*d (%s)\n", file, line_alignment, line, function);
+            native::printf("%s:%-*d (%s)\n", file, line_alignment, line, function);
         }
-        std::fflush(stderr);
+        native::flush();
     }
 
     auto filter_trace(Traceable* maybe_traceable, void* maybe_data) -> void
