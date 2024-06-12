@@ -7,6 +7,27 @@ if (NOT DEFINED COMPILER)
 endif ()
 set(build_root "build")
 set(build_cache_root "${build_root}/cache")
+set(
+    common_flags
+    -std=c++20
+    -O3
+)
+set(
+    diagnostic_flags
+    -fdiagnostics-color=always
+    -Wall
+    -Wextra
+    -Werror=return-type
+    -Wno-unused-parameter
+)
+set(
+    feature_flags
+    -fvisibility=hidden
+    -fno-rtti
+    -fno-exceptions
+    -nostdlib++
+    -nostdinc++
+)
 file(MAKE_DIRECTORY "${root}/${build_root}")
 file(MAKE_DIRECTORY "${root}/${build_cache_root}")
 find_program(compiler NAMES "${COMPILER}")
@@ -100,7 +121,7 @@ message("Building...")
 set(executable "${build_cache_root}/dewox.${build_id}.exe")
 if (NOT EXISTS "${executable}")
     execute_process(
-        COMMAND "${compiler}" -std=c++20 -O3 -Wall -Wextra -Werror=return-type -Wno-unused-parameter -fvisibility=hidden -fdiagnostics-color=always -o "${executable}" ${sources} ${sites}
+        COMMAND "${compiler}" ${common_flags} ${diagnostic_flags} ${feature_flags} -o "${executable}" ${sources} ${sites}
         WORKING_DIRECTORY "${root}"
         COMMAND_ECHO STDOUT
         COMMAND_ERROR_IS_FATAL ANY
