@@ -11,6 +11,8 @@ set(
     common_flags
     -std=c++20
     -O3
+    -static
+    -fno-pie
 )
 set(
     diagnostic_flags
@@ -25,6 +27,7 @@ set(
     -fvisibility=hidden
     -fno-rtti
     -fno-exceptions
+    -fno-strict-aliasing
     -nostdlib++
     -nostdinc++
 )
