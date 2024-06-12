@@ -1,5 +1,6 @@
 #include "test.hpp"
 #include "tool.hpp"
+#include "native.hpp"
 
 namespace dewox::inline main
 {
@@ -13,6 +14,9 @@ namespace dewox::inline main
 
 auto main() -> int
 {
-    return ::dewox::main::run();
+    ::dewox::native::load();
+    auto result = ::dewox::main::run();
+    ::dewox::native::unload();
+    return result;
 }
 

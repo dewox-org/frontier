@@ -20,6 +20,7 @@ set(
     -Wall
     -Wextra
     -Werror=return-type
+    -Werror=unused-result
     -Wno-unused-parameter
 )
 set(
