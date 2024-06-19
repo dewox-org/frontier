@@ -3,12 +3,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <signal.h>
 
 namespace dewox::native
 {
     auto load() -> void
     {
-        // Do nothing intentionally.
+        // Debuggers have higher priority to capture SIGTRAP signal.
+        // When something goes wrong, we will raise SIGTRAP.
+        // If a debugger is present, it captures the signal and will break the program right on spot.
+        // Otherwise, we simply ignore it.
+        ::signal(SIGTRAP, [] (int) { ::_Exit(EXIT_FAILURE); });
+
+        // Just don't.
+        ::signal(SIGPIPE, SIG_IGN);
     }
 
     auto unload() -> void
@@ -23,7 +31,8 @@ namespace dewox::native
 
     auto fatal() -> void
     {
-        ::_Exit(EXIT_FAILURE);
+        // Something goes wrong, we raise SIGTRAP to ask a debugger (if there is one attached) to break the program here.
+        ::raise(SIGTRAP);
     }
 
     auto printf(char const* format, ...) -> void
@@ -43,16 +52,19 @@ namespace dewox::native
     {
         if (byte_count == 0u) {
             fatal();
+            return nullptr;
         }
 
         if ((alignment & (alignment - 1u)) != 0u) {
             fatal();
+            return nullptr;
         }
 
         if (auto memory = ::aligned_alloc(alignment, byte_count)) {
             return (char*) memory;
         } else {
             fatal();
+            return nullptr;
         }
     }
 

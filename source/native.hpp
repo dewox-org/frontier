@@ -7,7 +7,7 @@ namespace dewox::native
     auto unload() -> void;
 
     [[noreturn]] auto exit() -> void;
-    [[noreturn]] auto fatal() -> void;
+    auto fatal() -> void;
 
     __attribute__((__format__(printf, 1, 2))) auto printf(char const* format, ...) -> void;
     auto flush() -> void;
