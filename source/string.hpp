@@ -14,7 +14,7 @@ namespace dewox::inline string
         char const* last;
 
         static constexpr auto into(String* result, char const* first, char const* last) -> void;
-        static constexpr auto size_into(String* result, char const* first, Size size) -> void;
+        static constexpr auto size_into(String* result, char const* first, Size byte_count) -> void;
         static constexpr auto until_into(String* result, char const* maybe_native_string) -> void;
         static auto item_into(String* result, auto const* item) -> void;
 
@@ -69,9 +69,9 @@ namespace dewox::inline string
         result->last = last;
     }
 
-    inline constexpr auto String::size_into(String* result, char const* first, Size size) -> void
+    inline constexpr auto String::size_into(String* result, char const* first, Size byte_count) -> void
     {
-        into(result, first, first + size);
+        into(result, first, first + byte_count);
     }
 
     inline constexpr auto String::until_into(String* result, char const* maybe_native_string) -> void
@@ -126,9 +126,9 @@ namespace dewox::inline string
 
 namespace dewox::inline string::literal
 {
-    inline constexpr auto operator ""_s (char const* first, Size byte_count) -> String
+    inline constexpr auto operator ""_s (char const* native_string, Size byte_count) -> String
     {
-        return create(String::size_into, first, byte_count);
+        return create(String::size_into, native_string, byte_count);
     }
 }
 
