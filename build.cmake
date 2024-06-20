@@ -1,15 +1,23 @@
 set(root "${CMAKE_CURRENT_LIST_DIR}")
 set(self "${CMAKE_CURRENT_LIST_FILE}")
+set(build_id)
 
 message("Build Setup:")
 if (NOT DEFINED COMPILER)
     set(COMPILER "g++")
+endif ()
+if (NOT DEFINED OBJCOPY)
+    set(OBJCOPY "objcopy")
+endif ()
+if (NOT DEFINED STRIP)
+    set(STRIP "strip")
 endif ()
 set(build_root "build")
 set(build_cache_root "${build_root}/cache")
 set(
     common_flags
     -std=c++20
+    -ggdb
     -O3
     -static
     -fno-pie
@@ -35,9 +43,19 @@ set(
 file(MAKE_DIRECTORY "${root}/${build_root}")
 file(MAKE_DIRECTORY "${root}/${build_cache_root}")
 find_program(compiler NAMES "${COMPILER}")
+find_program(objcopy NAMES "${OBJCOPY}")
+find_program(strip NAMES "${STRIP}")
 message("- Build: ${build_root}")
 message("- Build Cache: ${build_cache_root}")
 message("- Compiler: ${compiler} (${COMPILER})")
+message("- Objcopy: ${objcopy} (${OBJCOPY})")
+message("- Strip: ${strip} (${STRIP})")
+string(MD5 compiler_hash "${compiler}")
+string(MD5 objcopy_hash "${objcopy}")
+string(MD5 strip_hash "${strip}")
+list(APPEND build_id "${compiler_hash}")
+list(APPEND build_id "${objcopy_hash}")
+list(APPEND build_id "${strip_hash}")
 
 message("Discovering...")
 file(GLOB_RECURSE
@@ -65,7 +83,6 @@ file(GLOB_RECURSE
     RELATIVE "${root}"
     "${root}/source/*.cpp"
 )
-set(build_id)
 foreach (build_source "${self}" ${dependencies} ${sources})
     message("- ${build_source}")
 
@@ -123,6 +140,7 @@ file(WRITE
 
 message("Building...")
 set(executable "${build_cache_root}/dewox.${build_id}.exe")
+set(debug_symbol "${build_cache_root}/dewox.${build_id}.dbg")
 if (NOT EXISTS "${executable}")
     execute_process(
         COMMAND "${compiler}" ${common_flags} ${diagnostic_flags} ${feature_flags} -o "${executable}" ${sources} ${sites}
@@ -130,6 +148,17 @@ if (NOT EXISTS "${executable}")
         COMMAND_ECHO STDOUT
         COMMAND_ERROR_IS_FATAL ANY
     )
+    execute_process(
+        COMMAND "${objcopy}" --only-keep-debug "${executable}" "${debug_symbol}"
+        WORKING_DIRECTORY "${root}"
+        COMMAND_ECHO STDOUT
+    )
+    execute_process(
+        COMMAND "${strip}" --strip-all "${executable}"
+        WORKING_DIRECTORY "${root}"
+        COMMAND_ECHO STDOUT
+    )
 endif ()
 file(COPY_FILE "${root}/${executable}" "${root}/${build_root}/dewox" ONLY_IF_DIFFERENT)
+file(COPY_FILE "${root}/${debug_symbol}" "${root}/${build_root}/dewox.debug" ONLY_IF_DIFFERENT)
 
