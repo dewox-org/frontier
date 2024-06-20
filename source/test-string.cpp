@@ -41,6 +41,87 @@ namespace dewox::inline test
         if (test->start(test, "string/search/branching/fake")) {
             test->finish(test, ("helworldlo"_s.search(how_pattern2) == "helworld"_s));
         }
+
+        if (test->start(test, "string/fill/runtime/result")) {
+            char hello_buffer[5]{0,1,2,3,4};
+            auto hello = create(&String::item_into<decltype(hello_buffer)>, &hello_buffer);
+            test->finish(test, (hello.fill('-') == "-----"_s));
+        }
+
+        if (test->start(test, "string/fill/runtime/source")) {
+            char hello_buffer[5]{0,1,2,3,4};
+            auto hello = create(&String::item_into<decltype(hello_buffer)>, &hello_buffer);
+            hello.fill('-');
+            test->finish(test, (hello == "-----"_s));
+        }
+
+        if (test->start(test, "string/fill/constexpr")) {
+            struct Hello final
+            {
+                char buffer[5]{0,1,2,3,4};
+
+                constexpr Hello(int a)
+                {
+                    auto s = create(&String::size_into, buffer, sizeof(buffer));
+                    s.fill(a);
+                }
+            };
+            constexpr auto hello = Hello{'-'};
+            auto s = create(&String::item_into<decltype(hello.buffer)>, &hello.buffer);
+            test->finish(test, (s == "-----"_s));
+        }
+
+        if (test->start(test, "string/copy/runtime/long/result")) {
+            char hello_buffer[5]{0,1,2,3,4};
+            auto hello = create(&String::item_into<decltype(hello_buffer)>, &hello_buffer);
+            test->finish(test, (hello.copy("hello world"_s) == "hello"_s));
+        }
+
+        if (test->start(test, "string/copy/runtime/long/source")) {
+            char hello_buffer[5]{0,1,2,3,4};
+            auto hello = create(&String::item_into<decltype(hello_buffer)>, &hello_buffer);
+            hello.copy("hello world"_s);
+            test->finish(test, (hello == "hello"_s));
+        }
+
+        if (test->start(test, "string/copy/runtime/short/result")) {
+            char hello_buffer[5]{0,1,2,3,4};
+            auto hello = create(&String::item_into<decltype(hello_buffer)>, &hello_buffer);
+            hello.copy("hello world"_s);
+            test->finish(test, (hello.copy("wow"_s) == "wow"_s));
+        }
+
+        if (test->start(test, "string/copy/runtime/short/source")) {
+            char hello_buffer[5]{0,1,2,3,4};
+            auto hello = create(&String::item_into<decltype(hello_buffer)>, &hello_buffer);
+            hello.copy("hello world"_s);
+            hello.copy("wow"_s);
+            test->finish(test, (hello == "wowlo"_s));
+        }
+
+        if (test->start(test, "string/copy/runtime/prefix")) {
+            char hello_buffer[5]{0,1,2,3,4};
+            auto hello = create(&String::item_into<decltype(hello_buffer)>, &hello_buffer);
+            hello.copy("hello world"_s);
+            hello.prefix(2u).copy("world"_s);
+            test->finish(test, (hello == "wollo"_s));
+        }
+
+        if (test->start(test, "string/copy/constexpr")) {
+            struct Hello final
+            {
+                char buffer[5]{0,1,2,3,4};
+
+                constexpr Hello(String source)
+                {
+                    auto s = create(&String::size_into, buffer, sizeof(buffer));
+                    s.copy(source);
+                }
+            };
+            constexpr auto hello = Hello{"hello world"_s};
+            auto s = create(&String::item_into<decltype(hello.buffer)>, &hello.buffer);
+            test->finish(test, (s == "hello"_s));
+        }
     }
 }
 

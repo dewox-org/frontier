@@ -18,8 +18,8 @@ namespace dewox::inline string
         static constexpr auto until_into(String* result, char const* maybe_native_string) -> void;
         static auto item_into(String* result, auto const* item) -> void;
 
-        constexpr auto begin() -> char const*;
-        constexpr auto end() -> char const*;
+        constexpr auto begin() -> char*;
+        constexpr auto end() -> char*;
 
         constexpr auto byte_count() -> Size;
         constexpr explicit operator bool ();
@@ -29,11 +29,11 @@ namespace dewox::inline string
         constexpr auto skip(Size byte_count_after_first_to_skip = {}) -> String;
         constexpr auto pop(Size byte_count_before_last_to_pop = {}) -> String;
 
-        constexpr auto copy(String source) -> String;   // -> written_string
-        constexpr auto fill(int a) -> String;           // -> filled_string
-
         constexpr auto starts_with(String maybe_prefix) -> bool;
         constexpr auto ends_with(String maybe_suffix) -> bool;
+
+        constexpr auto copy(String source) -> String;   // -> written_string
+        constexpr auto fill(int a) -> String;           // -> filled_string
 
         // pattern = body? definition*;
         // definition = ":" <name:byte> body?;
@@ -89,8 +89,8 @@ namespace dewox::inline string
         size_into(result, (char const*) item, sizeof(*item));
     }
 
-    inline constexpr auto String::begin() -> char const* { return first; }
-    inline constexpr auto String::end() -> char const* { return last; }
+    inline constexpr auto String::begin() -> char* { return (char*) first; }
+    inline constexpr auto String::end() -> char* { return (char*) last; }
     inline constexpr auto String::byte_count() -> Size { return Size(last - first); }
     inline constexpr String::operator bool () { return (last > first); }
 
@@ -101,6 +101,24 @@ namespace dewox::inline string
 
     inline constexpr auto String::starts_with(String maybe_prefix) -> bool { return (prefix(min(byte_count(), maybe_prefix.byte_count())) == maybe_prefix); }
     inline constexpr auto String::ends_with(String maybe_suffix) -> bool { return (suffix(min(byte_count(), maybe_suffix.byte_count())) == maybe_suffix); }
+
+    inline constexpr auto String::copy(String source) -> String
+    {
+        auto target = prefix(min(byte_count(), source.byte_count()));
+        auto p = source.begin();
+        for (auto& byte: target) {
+            byte = *p++;
+        }
+        return target;
+    }
+
+    inline constexpr auto String::fill(int a) -> String
+    {
+        for (auto& byte: *this) {
+            byte = (char) a;
+        }
+        return *this;
+    }
 
     inline auto String::check_bounds() -> void
     {
