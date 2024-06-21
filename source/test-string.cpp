@@ -62,7 +62,7 @@ namespace dewox::inline test
 
                 constexpr Hello(int a)
                 {
-                    auto s = create(&String::size_into, buffer, sizeof(buffer));
+                    auto s = create(&String::count_into, buffer, sizeof(buffer));
                     s.fill(a);
                 }
             };
@@ -114,7 +114,7 @@ namespace dewox::inline test
 
                 constexpr Hello(String source)
                 {
-                    auto s = create(&String::size_into, buffer, sizeof(buffer));
+                    auto s = create(&String::count_into, buffer, sizeof(buffer));
                     s.copy(source);
                 }
             };
