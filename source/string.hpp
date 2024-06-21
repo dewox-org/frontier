@@ -6,7 +6,7 @@
 
 namespace dewox::inline string
 {
-    struct String final
+    struct String
     {
         /// You must ensure first <= last on your own. It is undefined behavior otherwise.
 

@@ -11,7 +11,7 @@ namespace dewox::inline tool
     [[nodiscard]] constexpr auto min(auto a, decltype(a) b) -> decltype(a);
     [[nodiscard]] constexpr auto max(auto a, decltype(a) b) -> decltype(a);
 
-    template <typename Object> struct Do_Self final { using Type = Object; };
+    template <typename Object> struct Do_Self { using Type = Object; };
     template <typename Object> using Self = typename Do_Self<Object>::Type;
 }
 

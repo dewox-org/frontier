@@ -56,7 +56,7 @@ namespace dewox::inline test
         }
 
         if (test->start(test, "string/fill/constexpr")) {
-            struct Hello final
+            struct Hello
             {
                 char buffer[5]{0,1,2,3,4};
 
@@ -108,7 +108,7 @@ namespace dewox::inline test
         }
 
         if (test->start(test, "string/copy/constexpr")) {
-            struct Hello final
+            struct Hello
             {
                 char buffer[5]{0,1,2,3,4};
 

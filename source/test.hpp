@@ -4,7 +4,7 @@
 namespace dewox::inline test
 {
     extern "C"
-    struct Test final
+    struct Test
     {
         void* maybe_data;
         auto (*start)(Test* test, char const* name) -> bool;
@@ -13,7 +13,7 @@ namespace dewox::inline test
 
     using Run_Test = auto (Test* test) -> void;
 
-    struct Count_Test final
+    struct Count_Test
     {
         Size count;
 
@@ -22,7 +22,7 @@ namespace dewox::inline test
         auto test() -> Test;
     };
 
-    struct Standard_Test final
+    struct Standard_Test
     {
         Size count;
         Size passed_test_count;

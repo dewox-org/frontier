@@ -3,7 +3,7 @@
 
 namespace dewox::inline site
 {
-    struct Site final
+    struct Site
     {
         String key;
         void* value;

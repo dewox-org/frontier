@@ -7,7 +7,7 @@ namespace dewox::inline tool
 {
     inline namespace
     {
-        struct Trace_Filter final
+        struct Trace_Filter
         {
             Traceable* traceable;
             void* maybe_data;
