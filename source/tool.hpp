@@ -13,6 +13,9 @@ namespace dewox::inline tool
 
     template <typename Object> struct Do_Self { using Type = Object; };
     template <typename Object> using Self = typename Do_Self<Object>::Type;
+
+    // A non-reference non-const type. Rejects "T&" and "T const".
+    template <typename Type> concept mutable_type = requires (Type* a, Type* b) { *a = *b; };
 }
 
 namespace dewox::inline tool
