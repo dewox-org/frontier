@@ -16,11 +16,17 @@ namespace dewox::inline tool
 
     // A non-reference non-const type. Rejects "T&" and "T const".
     template <typename Type> concept mutable_type = requires (Type* a, Type* b) { *a = *b; };
+
+    template <mutable_type Type> constexpr auto exchange(Type* variable, Self<Type> new_value) -> Type;
+    template <mutable_type Type> constexpr auto swap(Type* a, Type* b) -> void;
 }
 
 namespace dewox::inline tool
 {
     inline constexpr auto min(auto a, decltype(a) b) -> decltype(a) { return (a < b ? a : b); }
     inline constexpr auto max(auto a, decltype(a) b) -> decltype(a) { return (a > b ? a : b); }
+
+    template <mutable_type Type> inline constexpr auto exchange(Type* variable, Self<Type> new_value) -> Type { auto old_value = *variable; *variable = new_value; return old_value; }
+    template <mutable_type Type> inline constexpr auto swap(Type* a, Type* b) -> void { exchange(b, exchange(a, *b)); }
 }
 

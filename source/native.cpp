@@ -7,6 +7,13 @@
 
 namespace dewox::native
 {
+    inline namespace
+    {
+        auto maybe_report_grow_memory = (Report_Grow_Memory*) nullptr;
+        auto maybe_report_drop_memory = (Report_Drop_Memory*) nullptr;
+        auto maybe_memory_probe_data = (void*) nullptr;
+    }
+
     auto load() -> void
     {
         // Debuggers have higher priority to capture SIGTRAP signal.
@@ -61,6 +68,9 @@ namespace dewox::native
         }
 
         if (auto memory = ::aligned_alloc(alignment, byte_count)) {
+            if (auto report_grow_memory = maybe_report_grow_memory) {
+                report_grow_memory(byte_count, alignment, (char*) memory, maybe_memory_probe_data);
+            }
             return (char*) memory;
         } else {
             fatal();
@@ -70,7 +80,17 @@ namespace dewox::native
 
     auto drop_memory(void* maybe_memory) -> void
     {
+        if (auto report_drop_memory = maybe_report_drop_memory) {
+            report_drop_memory(maybe_memory, maybe_memory_probe_data);
+        }
         ::free(maybe_memory);
+    }
+
+    auto probe_memory(Report_Grow_Memory** do_maybe_report_grow_memory, Report_Drop_Memory** do_maybe_report_drop_memory, void** do_maybe_data) -> void
+    {
+        swap(&maybe_report_grow_memory, do_maybe_report_grow_memory);
+        swap(&maybe_report_drop_memory, do_maybe_report_drop_memory);
+        swap(&maybe_memory_probe_data, do_maybe_data);
     }
 }
 
