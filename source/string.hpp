@@ -1,5 +1,4 @@
 #pragma once
-#include "native.hpp"
 #include "object.hpp"
 #include "tool.hpp"
 #include "type.hpp"
@@ -24,16 +23,16 @@ namespace dewox::inline string
         constexpr auto byte_count() -> Size;
         constexpr explicit operator bool ();
 
-        constexpr auto prefix(Size byte_count_after_first_to_keep = {}) -> String;
-        constexpr auto suffix(Size byte_count_before_last_to_keep = {}) -> String;
-        constexpr auto skip(Size byte_count_after_first_to_skip = {}) -> String;
-        constexpr auto pop(Size byte_count_before_last_to_pop = {}) -> String;
+        constexpr auto prefix(Size prefix_byte_count) -> String;
+        constexpr auto suffix(Size suffix_byte_count) -> String;
+        constexpr auto skip(Size prefix_byte_count) -> String;
+        constexpr auto pop(Size suffix_byte_count) -> String;
 
         constexpr auto starts_with(String maybe_prefix) -> bool;
         constexpr auto ends_with(String maybe_suffix) -> bool;
 
-        constexpr auto copy(String source) -> String;   // -> written_string
-        constexpr auto fill(int a) -> String;           // -> filled_string
+        constexpr auto copy(String maybe_source) -> String;     // -> written_string
+        constexpr auto fill(int a) -> String;                   // -> filled_string
 
         // pattern = body? definition*;
         // definition = ":" <name:byte> body?;
@@ -94,18 +93,18 @@ namespace dewox::inline string
     inline constexpr auto String::byte_count() -> Size { return Size(last - first); }
     inline constexpr String::operator bool () { return (last > first); }
 
-    inline constexpr auto String::prefix(Size byte_count_after_first_to_keep) -> String { return create(into, first, first + byte_count_after_first_to_keep); }
-    inline constexpr auto String::suffix(Size byte_count_before_last_to_keep) -> String { return create(into, last - byte_count_before_last_to_keep, last); }
-    inline constexpr auto String::skip(Size byte_count_after_first_to_skip) -> String { return create(into, first + byte_count_after_first_to_skip, last); }
-    inline constexpr auto String::pop(Size byte_count_before_last_to_pop) -> String { return create(into, first, last - byte_count_before_last_to_pop); }
+    inline constexpr auto String::prefix(Size prefix_byte_count) -> String { return create(into, first, first + prefix_byte_count); }
+    inline constexpr auto String::suffix(Size suffix_byte_count) -> String { return create(into, last - suffix_byte_count, last); }
+    inline constexpr auto String::skip(Size prefix_byte_count) -> String { return create(into, first + prefix_byte_count, last); }
+    inline constexpr auto String::pop(Size suffix_byte_count) -> String { return create(into, first, last - suffix_byte_count); }
 
     inline constexpr auto String::starts_with(String maybe_prefix) -> bool { return (prefix(min(byte_count(), maybe_prefix.byte_count())) == maybe_prefix); }
     inline constexpr auto String::ends_with(String maybe_suffix) -> bool { return (suffix(min(byte_count(), maybe_suffix.byte_count())) == maybe_suffix); }
 
-    inline constexpr auto String::copy(String source) -> String
+    inline constexpr auto String::copy(String maybe_source) -> String
     {
-        auto target = prefix(min(byte_count(), source.byte_count()));
-        auto p = source.begin();
+        auto target = prefix(min(byte_count(), maybe_source.byte_count()));
+        auto p = maybe_source.begin();
         for (auto& byte: target) {
             byte = *p++;
         }
@@ -118,11 +117,6 @@ namespace dewox::inline string
             byte = (char) a;
         }
         return *this;
-    }
-
-    inline auto String::check_bounds() -> void
-    {
-        if (first > last) native::fatal();
     }
 
     inline constexpr auto operator == (String maybe_a, String maybe_b) -> bool

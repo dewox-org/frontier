@@ -1,4 +1,5 @@
 #include "string.hpp"
+#include "native.hpp"
 
 namespace dewox::inline string
 {
@@ -150,6 +151,11 @@ namespace dewox::inline string
             }
         }
         return pending;
+    }
+
+    auto String::check_bounds() -> void
+    {
+        if (first > last) native::fatal();
     }
 }
 
