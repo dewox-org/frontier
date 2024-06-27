@@ -229,6 +229,14 @@ namespace dewox::inline test
             test->finish(test, (count_buffers(*chain) == 1u));
         }
 
+        if (test->start(test, "chain/fix/huge-first-block")) {
+            auto chain = Sink<Chain>{};
+            constexpr auto mebibyte = Size(1u << 20u);
+            chain->grow(mebibyte, 1u).fill(0xfe);
+            chain = {};
+            test->finish(test, true);
+        }
+
         if (test->start(test, "chain/memory/dirty")) {
             auto chain = Sink<Chain>{};
             chain->grow(2u, 2u);
