@@ -19,6 +19,9 @@ namespace dewox::inline tool
 
     template <mutable_type Type> constexpr auto exchange(Type* variable, Self<Type> new_value) -> Type;
     template <mutable_type Type> constexpr auto swap(Type* a, Type* b) -> void;
+
+    template <mutable_type Source, mutable_type Target>
+    constexpr auto transmute(Source source) -> Target;
 }
 
 namespace dewox::inline tool
@@ -28,5 +31,12 @@ namespace dewox::inline tool
 
     template <mutable_type Type> inline constexpr auto exchange(Type* variable, Self<Type> new_value) -> Type { auto old_value = *variable; *variable = new_value; return old_value; }
     template <mutable_type Type> inline constexpr auto swap(Type* a, Type* b) -> void { exchange(b, exchange(a, *b)); }
+
+    template <mutable_type Source, mutable_type Target>
+    inline constexpr auto transmute(Source source) -> Target
+    {
+        static_assert(sizeof(Source) == sizeof(Target));
+        return __builtin_bit_cast(Target, source);
+    }
 }
 

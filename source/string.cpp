@@ -1,5 +1,6 @@
 #include "string.hpp"
 #include "native.hpp"
+#include "chain.hpp"
 
 namespace dewox::inline string
 {
@@ -159,6 +160,14 @@ namespace dewox::inline string
             (void) native::fatal();
             return;
         }
+    }
+}
+
+namespace dewox::inline writer
+{
+    auto write(Chain* chain, String piece) -> void
+    {
+        chain->grow(piece.byte_count()).copy(piece);
     }
 }
 
