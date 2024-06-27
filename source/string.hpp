@@ -2,6 +2,7 @@
 #include "object.hpp"
 #include "tool.hpp"
 #include "type.hpp"
+#include "writer.hpp"
 
 namespace dewox::inline string
 {
@@ -48,6 +49,14 @@ namespace dewox::inline string
 
     constexpr auto operator == (String maybe_a, String maybe_b) -> bool;
     constexpr auto operator != (String maybe_a, String maybe_b) -> bool;
+}
+
+namespace dewox::inline writer
+{
+    auto write(Chain* chain, String piece) -> void;
+
+    template <Size byte_count>
+    auto write(Chain* chain, char const (&piece)[byte_count]) -> void;
 }
 
 namespace dewox::inline string::literal
@@ -136,11 +145,20 @@ namespace dewox::inline string
     }
 }
 
+namespace dewox::inline writer
+{
+    template <Size byte_count>
+    inline auto write(Chain* chain, char const (&piece)[byte_count]) -> void
+    {
+        write(chain, create(&String::count_into, piece, byte_count - 1u));  // "- 1u" to remove the suffix '\0'.
+    }
+}
+
 namespace dewox::inline string::literal
 {
     inline constexpr auto operator ""_s (char const* native_string, Size byte_count) -> String
     {
-        return create(String::count_into, native_string, byte_count);
+        return create(&String::count_into, native_string, byte_count);
     }
 }
 
