@@ -54,13 +54,9 @@ namespace dewox::inline chain
                 result->byte_count = byte_count;
             }
 
-            auto unlink() -> void
-            {
-                connect_link(back, next);
-            }
-
             auto drop() -> void
             {
+                connect_link(back, next);
                 native::drop_memory(buffer().begin());
             }
 
@@ -102,10 +98,10 @@ namespace dewox::inline chain
 
             auto drop() -> void
             {
-                for (auto b = &block; true;) {
-                    exchange(&b, b->next)->drop();
-                    if (b == &block) break;
+                while (block.back != &block) {
+                    block.back->drop();
                 }
+                block.drop();
             }
 
             auto grow(Size byte_count, Size alignment) -> String
@@ -140,7 +136,6 @@ namespace dewox::inline chain
                     } else {
                         byte_count -= back->byte_count;
                         total_byte_count -= back->byte_count;
-                        back->unlink();
                         back->drop();
                     }
                 }
@@ -165,7 +160,6 @@ namespace dewox::inline chain
                             back->byte_count -= merged_buffer_byte_count;
                         } else {
                             merged_buffer = merged_buffer.pop(merged_buffer.copy(back->buffer()).byte_count());
-                            back->unlink();
                             back->drop();
                             back = merged_block->back;
                         }
