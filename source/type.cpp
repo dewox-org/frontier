@@ -12,6 +12,10 @@ namespace dewox::inline type
         static_assert(sizeof(Identity) == 8u);
         static_assert(sizeof(Identity) == alignof(Identity));
         static_assert(Identity(-1) > Identity(0));
+
+        static_assert(sizeof(int short signed) == 2u);
+        static_assert(sizeof(int signed) == 4u);
+        static_assert(sizeof(int long long signed) == 8u);
     }
 }
 

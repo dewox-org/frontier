@@ -27,6 +27,8 @@ namespace dewox::inline object
 
         static auto into(Sink* result, Object object) -> void;
 
+        auto take() -> Object;
+
         auto operator * () -> Object*;
         auto operator -> () -> Object*;
     };
@@ -63,6 +65,8 @@ namespace dewox::inline object
     template <sinking_type Object> inline auto Sink<Object>::operator = (Sink a) -> Sink& { swap(&object, &a.object); return *this; }
 
     template <sinking_type Object> inline auto Sink<Object>::into(Sink* result, Object object) -> void { result->object = object; }
+
+    template <sinking_type Object> inline auto Sink<Object>::take() -> Object { return exchange(&object, {}); }
 
     template <sinking_type Object> inline auto Sink<Object>::operator *  () -> Object* { return &object; }
     template <sinking_type Object> inline auto Sink<Object>::operator -> () -> Object* { return &object; }

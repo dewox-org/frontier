@@ -53,6 +53,18 @@ namespace dewox::native
         ::va_end(ap);
     }
 
+    auto print_string(char const* maybe_string, Size byte_count) -> void
+    {
+        if (auto string = maybe_string) {
+            ::fwrite(string, byte_count, 1u, stderr);
+        } else {
+            if (byte_count > 0u) {
+                (void) fatal();
+                return;
+            }
+        }
+    }
+
     auto flush() -> void
     {
         ::fflush(stderr);
@@ -92,5 +104,24 @@ namespace dewox::native
         swap(&maybe_report_drop_memory, do_maybe_report_drop_memory);
         swap(&maybe_memory_probe_data, do_maybe_data);
     }
+}
+
+namespace dewox::native
+{
+    inline namespace
+    {
+        extern "C"
+        {
+            auto dewox_external_itoa_format_integer_32bit(char buffer[11], int signed a) -> char*;
+            auto dewox_external_itoa_format_integer_64bit(char buffer[20], int long long signed a) -> char*;
+            auto dewox_external_itoa_format_unteger_32bit(char buffer[10], int unsigned a) -> char*;
+            auto dewox_external_itoa_format_unteger_64bit(char buffer[20], int long long unsigned a) -> char*;
+        }
+    }
+
+    auto format_integer_32bit(char buffer[11], int signed a) -> char* { return dewox_external_itoa_format_integer_32bit(buffer, a); }
+    auto format_integer_64bit(char buffer[20], int long long signed a) -> char* { return dewox_external_itoa_format_integer_64bit(buffer, a); }
+    auto format_unteger_32bit(char buffer[10], int unsigned a) -> char* { return dewox_external_itoa_format_unteger_32bit(buffer, a); }
+    auto format_unteger_64bit(char buffer[20], int long long unsigned a) -> char* { return dewox_external_itoa_format_unteger_64bit(buffer, a); }
 }
 
