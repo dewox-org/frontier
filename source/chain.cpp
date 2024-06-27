@@ -116,7 +116,10 @@ namespace dewox::inline chain
                         back->byte_count = aligned_byte_count + byte_count;
                         return back->buffer().skip(aligned_byte_count);
                     } else {
-                        auto back = create_block_after(block.back, max(max(alignment << 1u, first_block_capacity), block.back->capacity << 1u), byte_count);
+                        auto min_capacity = next_align(byte_count, alignof(Block)) + sizeof(Block);
+                        auto aligned_capacity = max(max(alignment << 1u, first_block_capacity), block.back->capacity << 1u);
+                        while (aligned_capacity < min_capacity) aligned_capacity <<= 1u;    // TODO: This may loop infinitely.
+                        auto back = create_block_after(block.back, aligned_capacity, byte_count);
                         return back->buffer();
                     }
                 } else {
