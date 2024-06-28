@@ -65,7 +65,7 @@ namespace dewox::inline chain
 
         auto create_block_after(Block* reference, Size capacity, Size byte_count) -> Block*
         {
-            if (!is_power_of_two(capacity)) native::fatal();
+            if (!is_power_of_two(capacity)) return native::fatal();
             auto data = native::grow_memory(capacity, capacity);
             auto block = (Block*) (data + capacity - sizeof(Block));
             Block::after_into(block, reference, capacity, byte_count);
@@ -196,7 +196,7 @@ namespace dewox::inline chain
 
     auto Chain::grow(Size byte_count, Size alignment) -> String
     {
-        if (!is_power_of_two(alignment)) native::fatal();
+        if (!is_power_of_two(alignment)) return native::fatal();
 
         if (!maybe_control) maybe_control = create_control();
         auto control = (Control*) maybe_control;

@@ -155,7 +155,10 @@ namespace dewox::inline string
 
     auto String::check_bounds() -> void
     {
-        if (first > last) native::fatal();
+        if (first > last) {
+            (void) native::fatal();
+            return;
+        }
     }
 }
 
