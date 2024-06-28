@@ -20,7 +20,9 @@ namespace dewox::native
         // When something goes wrong, we will raise SIGTRAP.
         // If a debugger is present, it captures the signal and will break the program right on spot.
         // Otherwise, we simply ignore it.
-        ::signal(SIGTRAP, [] (int) { ::_Exit(EXIT_FAILURE); });
+        ::signal(SIGTRAP, [] (int) {
+            native::printf("[BAD] Something goes wrong. Attach a debugger for more details.\n");
+        });
 
         // Just don't.
         ::signal(SIGPIPE, SIG_IGN);
@@ -31,15 +33,16 @@ namespace dewox::native
         // Do nothing intentionally.
     }
 
-    auto exit() -> void
-    {
-        ::_Exit(EXIT_SUCCESS);
-    }
-
-    auto fatal() -> void
+    auto fatal() -> Fatal
     {
         // Something goes wrong, we raise SIGTRAP to ask a debugger (if there is one attached) to break the program here.
         ::raise(SIGTRAP);
+        return {};
+    }
+
+    auto exit() -> void
+    {
+        ::_Exit(EXIT_SUCCESS);
     }
 
     auto printf(char const* format, ...) -> void
@@ -58,13 +61,11 @@ namespace dewox::native
     auto grow_memory(Size byte_count, Size alignment) -> char*
     {
         if (byte_count == 0u) {
-            fatal();
-            return nullptr;
+            return fatal();
         }
 
         if ((alignment & (alignment - 1u)) != 0u) {
-            fatal();
-            return nullptr;
+            return fatal();
         }
 
         if (auto memory = ::aligned_alloc(alignment, byte_count)) {
@@ -73,8 +74,7 @@ namespace dewox::native
             }
             return (char*) memory;
         } else {
-            fatal();
-            return nullptr;
+            return fatal();
         }
     }
 

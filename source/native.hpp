@@ -9,8 +9,9 @@ namespace dewox::native
     auto load() -> void;
     auto unload() -> void;
 
+    struct Fatal { template <typename Type> operator Type () { return Type{}; } };
+    [[nodiscard]] auto fatal() -> Fatal;  // fatal() never cause the program to exit. Always return 0.
     [[noreturn]] auto exit() -> void;
-    auto fatal() -> void;
 
     __attribute__((__format__(printf, 1, 2))) auto printf(char const* format, ...) -> void;
     auto flush() -> void;
