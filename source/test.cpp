@@ -34,7 +34,7 @@ namespace dewox::inline test
         {
             auto data = (Standard_Test*) test->maybe_data;
             data->test_name = name;
-            native::printf("[%*zu/%-*zu] Testing %s...\n", data->count_digit_count, data->passed_test_count + data->failed_test_count, data->count_digit_count, data->count, name);
+            native::printf("[%*zu/%-*zu] Testing %s...\n", data->count_digit_count, data->passed_test_count + data->failed_test_count + 1u, data->count_digit_count, data->count, name);
             native::flush();
             return true;
         }
@@ -54,7 +54,7 @@ namespace dewox::inline test
             } else {
                 data->failed_test_count++;
             }
-            native::printf("\e[F[%*zu/%-*zu] %s %s\e[K\n", data->count_digit_count, data->passed_test_count + data->failed_test_count, data->count_digit_count, data->count, (success ? " OK " : "FAIL"), data->test_name);
+            native::printf("%s[%*zu/%-*zu] %s %s\e[K\n", (success ? "\e[F" : ""), data->count_digit_count, data->passed_test_count + data->failed_test_count, data->count_digit_count, data->count, (success ? " OK " : "FAIL"), data->test_name);
             native::flush();
             data->test_name = {};
         }
