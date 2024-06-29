@@ -64,16 +64,11 @@ file(GLOB_RECURSE
     RELATIVE "${root}"
     "${root}/source/test-*.cpp"
 )
-file(GLOB
-    self
-    LIST_DIRECTORIES false
-    RELATIVE "${root}"
-    "${self}"
-)
 file(GLOB_RECURSE
     dependencies
     LIST_DIRECTORIES false
     RELATIVE "${root}"
+    "${self}"
     "${root}/source/*.hpp"
     "${root}/source/*.inl"
 )
@@ -83,7 +78,28 @@ file(GLOB_RECURSE
     RELATIVE "${root}"
     "${root}/source/*.cpp"
 )
-foreach (build_source "${self}" ${dependencies} ${sources})
+file(GLOB
+    externals
+    LIST_DIRECTORIES true
+    RELATIVE "${root}/external"
+    "${root}/external/*/"
+)
+file(GLOB
+    externals_dependencies_1
+    LIST_DIRECTORIES false
+    RELATIVE "${root}"
+    "${root}/build-external.cmake"
+    "${root}/external/*/external.txt"
+    "${root}/external/*/*.cpp"
+)
+file(GLOB_RECURSE
+    externals_dependencies_2
+    LIST_DIRECTORIES false
+    RELATIVE "${root}"
+    "${root}/external/*/*.h"
+    "${root}/external/*/*.hpp"
+)
+foreach (build_source ${dependencies} ${sources} ${externals_dependencies_1} ${externals_dependencies_2})
     message("- ${build_source}")
 
     string(MD5 path_hash "${build_source}")
@@ -137,6 +153,27 @@ file(WRITE
     "}\n"
     "\n"
 )
+
+message("Building externals...")
+foreach (external ${externals})
+    execute_process(
+        COMMAND "${CMAKE_COMMAND}" "-DEXTERNAL:STRING=${external}" "-DCOMPILER:FILEPATH=${compiler}" -P "build-external.cmake"
+        WORKING_DIRECTORY "${root}"
+        OUTPUT_VARIABLE external_outputs
+        ERROR_VARIABLE external_outputs
+        ECHO_OUTPUT_VARIABLE
+        ECHO_ERROR_VARIABLE
+        COMMAND_ECHO STDOUT
+        COMMAND_ERROR_IS_FATAL ANY
+    )
+    if ("${external_outputs}" MATCHES "OK external ([^\n]+)[.]")
+        set(library "${CMAKE_MATCH_1}")
+        message("Using ${library}.")
+        list(APPEND sources "${library}")
+    else ()
+        message(FATAL_ERROR "Failed to build external ${external}.")
+    endif ()
+endforeach ()
 
 message("Building...")
 set(executable "${build_cache_root}/dewox.${build_id}.exe")
