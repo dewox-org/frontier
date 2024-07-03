@@ -9,6 +9,9 @@ namespace dewox::inline object
     template <mutable_type Object, typename... Arguments>
     constexpr auto create(auto (*into)(Object* result, Arguments...) -> void, Self<Arguments>... arguments) -> Object;
 
+    template <mutable_type Object>
+    constexpr auto drop(Object* object) -> void;
+
     template <sinking_type Object>
     constexpr auto reset(Object* object) -> void;
 
@@ -37,6 +40,14 @@ namespace dewox::inline object
         Object result;
         into(&result, arguments...);
         return result;
+    }
+
+    template <mutable_type Object>
+    inline constexpr auto drop(Object* object) -> void
+    {
+        if constexpr (sinking_type<Object>) {
+            object->drop();
+        }
     }
 
     template <sinking_type Object>

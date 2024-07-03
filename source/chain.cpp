@@ -3,6 +3,7 @@
 #include "string.hpp"
 #include "type.hpp"
 #include "tool.hpp"
+#include "list.hpp"
 #include "native.hpp"
 
 namespace dewox::inline chain
@@ -21,12 +22,6 @@ namespace dewox::inline chain
             return a + ((1u + ~a) & (alignment - 1u));
         }
 
-        constexpr auto connect_link(auto* a, auto* b) -> void
-        {
-            a->next = b;
-            b->back = a;
-        }
-
         struct Block
         {
             /// [invariant] alignof(buffer()) == capacity;
@@ -34,29 +29,27 @@ namespace dewox::inline chain
             /// [invariant] next->capacity >= 2 * this->capacity; (when next != control_block)
             /// [invariant] byte_count > 0u;
 
-            Block* back;
-            Block* next;
+            DEWOX_LIST(Block);
             Size capacity;
             Size byte_count;
 
             static auto into(Block* result, Size capacity, Size byte_count) -> void
             {
-                connect_link(result, result);
+                link_list(result, result);
                 result->capacity = capacity;
                 result->byte_count = byte_count;
             }
 
             static auto after_into(Block* result, Block* reference, Size capacity, Size byte_count) -> void
             {
-                connect_link(result, reference->next);
-                connect_link(reference, result);
+                insert_after_list(reference, result);
                 result->capacity = capacity;
                 result->byte_count = byte_count;
             }
 
             auto drop() -> void
             {
-                connect_link(back, next);
+                detach_from_list(this);
                 native::drop_memory(buffer().begin());
             }
 
@@ -98,10 +91,7 @@ namespace dewox::inline chain
 
             auto drop() -> void
             {
-                while (block.back != &block) {
-                    block.back->drop();
-                }
-                block.drop();
+                drop_list(&block);
             }
 
             auto grow(Size byte_count, Size alignment) -> String
