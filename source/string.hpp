@@ -32,7 +32,7 @@ namespace dewox::inline string
         constexpr auto ends_with(String maybe_suffix) -> bool;
 
         constexpr auto copy(String maybe_source) -> String;     // -> written_string
-        constexpr auto fill(int a) -> String;                   // -> filled_string
+        constexpr auto fill(int a = {}) -> String;              // -> filled_string
 
         // pattern = body? definition*;
         // definition = ":" <name:byte> body?;
