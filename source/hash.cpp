@@ -2,17 +2,17 @@
 
 namespace dewox::inline hash
 {
-    auto hash_identity(Identity a) -> Hash
+    auto hash_identity(Identity a, Identity key0, Identity key1) -> Hash
     {
-        // Using SipHash-2-4 with a 0 key from "https://github.com/veorq/SipHash/blob/master/siphash.c".
+        // Using SipHash-2-4 from "https://github.com/veorq/SipHash/blob/master/siphash.c".
 
         constexpr auto c_round_count = 2u;
         constexpr auto d_round_count = 4u;
 
-        auto v0 = Identity(0x736f6d6570736575u);
-        auto v1 = Identity(0x646f72616e646f6du);
-        auto v2 = Identity(0x6c7967656e657261u);
-        auto v3 = Identity(0x7465646279746573u);
+        auto v0 = Identity(0x736f6d6570736575u) ^ key0;
+        auto v1 = Identity(0x646f72616e646f6du) ^ key1;
+        auto v2 = Identity(0x6c7967656e657261u) ^ key0;
+        auto v3 = Identity(0x7465646279746573u) ^ key1;
         auto b = Identity(Identity(sizeof(Identity)) << 56u);
 
         auto rotate_left = [] (Identity a, int unsigned offset) -> Identity {

@@ -74,7 +74,8 @@ namespace dewox::inline map
             auto try_lookup(Identity key, bool inserts, bool removes) -> Entry*
             {
                 auto do_maybe_tree = &maybe_root;
-                auto hash = hash_identity(key);
+                auto layer = Identity{};
+                auto hash = hash_identity(key, hash_identity(layer++, 0u, 1u), 0u);
 
                 while (true) {
                     auto tree = *do_maybe_tree;
@@ -118,9 +119,11 @@ namespace dewox::inline map
                         // Fallthrough to continue looking.
                     }
 
-                    auto subtree_index = (exchange(&hash, hash >> effective_hash_bit_count_per_block) & subtree_index_mask);
-                    if ((hash & hash_exhaustion_mask) == 0u) hash = hash_identity(hash);
-                    do_maybe_tree = &tree->tree.maybe_subtrees[subtree_index];
+                    hash >>= effective_hash_bit_count_per_block;
+                    if ((hash & hash_exhaustion_mask) == 0u) {
+                        auto subtree_index = (exchange(&hash, hash_identity(key, hash_identity(layer++, 0u, 1u), 0u)) & subtree_index_mask);
+                        do_maybe_tree = &tree->tree.maybe_subtrees[subtree_index];
+                    }
                 }
             }
         };
