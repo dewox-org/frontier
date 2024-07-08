@@ -252,7 +252,7 @@ namespace dewox::inline test
         if (test->start(test, "map/density/huge")) {
             auto map = Sink<Map>{};
             Map::into(*map, &control_pool, &block_pool);
-            for (auto i = 0u; i < 1024u * 1024u; i++) map->update(i, i * 10u);
+            for (auto i = 0u; i < 32 * 1024u * 1024u; i++) map->update(i, i * 10u);
             test->finish(test, true);
         }
     }

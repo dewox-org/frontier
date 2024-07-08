@@ -51,26 +51,12 @@ namespace dewox::inline map
 
         auto Entry::Tree::free(Pool* pool) -> void
         {
-            static auto level = 0;
-            Identity usage[2]{};
-            auto count = 0u;
-            for (auto& entry: create(Slice<Entry>::count_into, (Entry*) this + 1u, entry_count_per_block - 1u)) {
-                usage[0] <<= 1u;
-                usage[0] |= usage[1] >> 63;
-                usage[1] <<= 1u;
-                usage[1] |= (bool) entry.data.next;
-                count += (bool) entry.data.next;
-            }
-            native::printf("[%02d] Map block (%04x): %016lx %016lx\n", level, count, usage[0], usage[1]);
-
-            level++;
             for (auto maybe_subtree: maybe_subtrees) {
                 if (auto subtree = maybe_subtree) {
                     subtree->tree.free(pool);
                 }
             }
             pool->free(this);
-            level--;
         }
 
         struct Control
@@ -82,10 +68,8 @@ namespace dewox::inline map
 
             auto free() -> void
             {
-                native::printf("==== Map Report ====\n");
                 if (auto root = maybe_root) root->tree.free(block_pool);
                 control_pool->free(this);
-                native::printf("\n");
             }
 
             auto try_lookup(Identity key, bool inserts, bool removes) -> Entry*
