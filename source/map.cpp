@@ -12,9 +12,9 @@ namespace dewox::inline map
         constexpr auto entry_hash_bit_count_per_block = 7u;
         constexpr auto subtree_hash_bit_count_per_block = 2u;
         constexpr auto effective_hash_bit_count_per_block = max(entry_hash_bit_count_per_block, subtree_hash_bit_count_per_block);
-        constexpr auto layer_count_per_hash = 7u;
-        constexpr auto hash_bit_count_per_layer = effective_hash_bit_count_per_block * layer_count_per_hash;
-        static_assert(hash_bit_count_per_layer + effective_hash_bit_count_per_block * 2u < bit_count_per_hash, "Not enough entropy.");
+        constexpr auto round_count_per_hash = 8u;
+        constexpr auto hash_bit_count_per_layer = effective_hash_bit_count_per_block * round_count_per_hash;
+        static_assert(hash_bit_count_per_layer + subtree_hash_bit_count_per_block * 2u < bit_count_per_hash, "Not enough entropy.");
 
         constexpr auto entry_count_per_block = Size(Size(1u) << entry_hash_bit_count_per_block);
         constexpr auto subtree_count_per_block = Size(Size(1u) << subtree_hash_bit_count_per_block);
@@ -75,7 +75,7 @@ namespace dewox::inline map
             {
                 auto do_maybe_tree = &maybe_root;
                 auto layer = Identity{};
-                auto hash = hash_identity(key, hash_identity(layer++, 0u, 1u), 0u);
+                auto hash = hash_identity(key, layer++);
 
                 while (true) {
                     auto tree = *do_maybe_tree;
@@ -121,7 +121,7 @@ namespace dewox::inline map
 
                     hash >>= effective_hash_bit_count_per_block;
                     if ((hash & hash_exhaustion_mask) == 0u) {
-                        auto subtree_index = (exchange(&hash, hash_identity(key, hash_identity(layer++, 0u, 1u), 0u)) & subtree_index_mask);
+                        auto subtree_index = (exchange(&hash, hash_identity(key, layer++)) & subtree_index_mask);
                         do_maybe_tree = &tree->tree.maybe_subtrees[subtree_index];
                     }
                 }

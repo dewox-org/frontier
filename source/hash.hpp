@@ -5,6 +5,6 @@ namespace dewox::inline hash
 {
     using Hash = Identity;
 
-    auto hash_identity(Identity a, Identity key0 = {}, Identity key1 = {}) -> Hash;
+    auto hash_identity(Identity a, Identity seed = {}) -> Hash;
 }
 
