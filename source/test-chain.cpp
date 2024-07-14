@@ -237,6 +237,16 @@ namespace dewox::inline test
             test->finish(test, true);
         }
 
+        if (test->start(test, "chain/fix/concatenate-blocks")) {
+            auto chain = Sink<Chain>{};
+            chain->grow(200u, 1u).fill(0xfa);
+            chain->grow(200u, 1u).fill(0x7a);
+            auto result = chain->merge(400u);
+            auto a = chain->grow(200u, 1u).fill(0xfa);
+            auto b = chain->grow(200u, 1u).fill(0x7a);
+            test->finish(test, (result.prefix(200u) == a && result.suffix(200u) == b));
+        }
+
         if (test->start(test, "chain/memory/dirty")) {
             auto chain = Sink<Chain>{};
             chain->grow(2u, 2u);

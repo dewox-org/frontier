@@ -162,7 +162,7 @@ namespace dewox::inline chain
                             merged_buffer = {};
                             back->byte_count -= merged_buffer_byte_count;
                         } else {
-                            merged_buffer = merged_buffer.pop(merged_buffer.copy(back->buffer()).byte_count());
+                            merged_buffer = merged_buffer.pop(merged_buffer.suffix(back->byte_count).copy(back->buffer()).byte_count());
                             back->drop();
                             back = merged_block->back;
                         }
