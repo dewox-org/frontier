@@ -140,7 +140,8 @@ file(WRITE
 
 message("Building...")
 set(executable "${build_cache_root}/dewox.${build_id}.exe")
-set(debug_symbol "${build_cache_root}/dewox.${build_id}.dbg")
+set(executable_debug "${build_cache_root}/dewox-debug.${build_id}.exe")
+set(debug_symbol "${build_cache_root}/dewox.${build_id}.symbol")
 if (NOT EXISTS "${executable}")
     execute_process(
         COMMAND "${compiler}" ${common_flags} ${diagnostic_flags} ${feature_flags} -o "${executable}" ${sources} ${sites}
@@ -148,6 +149,7 @@ if (NOT EXISTS "${executable}")
         COMMAND_ECHO STDOUT
         COMMAND_ERROR_IS_FATAL ANY
     )
+    file(COPY_FILE "${root}/${executable}" "${root}/${executable_debug}" ONLY_IF_DIFFERENT)
     execute_process(
         COMMAND "${objcopy}" --only-keep-debug "${executable}" "${debug_symbol}"
         WORKING_DIRECTORY "${root}"
@@ -160,5 +162,6 @@ if (NOT EXISTS "${executable}")
     )
 endif ()
 file(COPY_FILE "${root}/${executable}" "${root}/${build_root}/dewox" ONLY_IF_DIFFERENT)
-file(COPY_FILE "${root}/${debug_symbol}" "${root}/${build_root}/dewox.debug" ONLY_IF_DIFFERENT)
+file(COPY_FILE "${root}/${executable_debug}" "${root}/${build_root}/dewox-debug" ONLY_IF_DIFFERENT)
+file(COPY_FILE "${root}/${debug_symbol}" "${root}/${build_root}/dewox.symbol" ONLY_IF_DIFFERENT)
 
