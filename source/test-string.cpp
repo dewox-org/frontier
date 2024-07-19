@@ -2,7 +2,7 @@
 #include "string.hpp"
 #include "object.hpp"
 
-namespace dewox::inline test
+namespace dewox
 {
     extern "C" auto dewox_site_test_string(Test* test) -> void
     {

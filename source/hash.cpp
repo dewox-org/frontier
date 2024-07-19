@@ -1,6 +1,6 @@
 #include "hash.hpp"
 
-namespace dewox::inline hash
+namespace dewox
 {
     auto hash_identity(Identity a, Identity seed) -> Identity
     {

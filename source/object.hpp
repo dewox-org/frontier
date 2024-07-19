@@ -2,7 +2,7 @@
 // Conventions to define your own object struct, and helper functions to utilize conventions.
 #include "tool.hpp"
 
-namespace dewox::inline object
+namespace dewox
 {
     template <typename Object> concept sinking_type = requires (Object* a) { a->drop(); };
 
@@ -34,7 +34,7 @@ namespace dewox::inline object
     };
 }
 
-namespace dewox::inline object
+namespace dewox
 {
     template <mutable_type Object, typename... Arguments>
     inline constexpr auto create(auto (*into)(Object* result, Arguments... arguments) -> void, Self<Arguments>... arguments) -> Object

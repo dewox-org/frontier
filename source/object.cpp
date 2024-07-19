@@ -1,6 +1,6 @@
 #include "object.hpp"
 
-namespace dewox::inline object
+namespace dewox
 {
     // Empty intentionally.
 }

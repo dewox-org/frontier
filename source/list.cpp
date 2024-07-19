@@ -1,6 +1,6 @@
 #include "list.hpp"
 
-namespace dewox::inline list
+namespace dewox
 {
     // Empty intentionally.
 }

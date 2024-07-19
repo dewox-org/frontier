@@ -118,7 +118,7 @@ set(site_tests_declaration)
 set(site_tests_reference)
 string(APPEND
     site_tests_declaration
-    "namespace dewox::inline test\n"
+    "namespace dewox\n"
     "{\n"
 )
 foreach (test ${tests})
@@ -127,7 +127,7 @@ foreach (test ${tests})
         string(REPLACE "-" "_" test_id "${test_name}")
         message("- ${test}: ${test_id}")
         string(APPEND site_tests_declaration "    extern \"C\" auto dewox_site_${test_id}(Test* test) -> void;\n")
-        string(APPEND site_tests_reference "        ::dewox::object::create(&Site::into, \"${test_name}\"_s, (void*) &::dewox::test::dewox_site_${test_id}),\n")
+        string(APPEND site_tests_reference "        ::dewox::create(&Site::into, \"${test_name}\"_s, (void*) &::dewox::dewox_site_${test_id}),\n")
     else ()
         message("! ${test}: invalid test filename, ignored.")
     endif ()
@@ -144,11 +144,11 @@ file(WRITE
     "\n"
     "${site_tests_declaration}"
     "\n"
-    "namespace dewox::inline site\n"
+    "namespace dewox\n"
     "{\n"
     "    Site dewox_sites[]{\n"
     "${site_tests_reference}"
-    "        ::dewox::object::create(&Site::into, {}, {}),\n"
+    "        ::dewox::create(&Site::into, {}, {}),\n"
     "    };\n"
     "}\n"
     "\n"

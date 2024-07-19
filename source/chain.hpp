@@ -8,7 +8,7 @@
 #include "type.hpp"
 #include "object.hpp"
 
-namespace dewox::inline chain
+namespace dewox
 {
     using Find_Buffer = auto (String buffer, void* maybe_data) -> bool;
 
@@ -44,7 +44,7 @@ namespace dewox::inline chain
     };
 }
 
-namespace dewox::inline chain
+namespace dewox
 {
     inline auto Chain::clear() -> void { pop(byte_count()); }
     inline auto Chain::back(Size byte_count) -> char* { return merge(byte_count).begin(); }

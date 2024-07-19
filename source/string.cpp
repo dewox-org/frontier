@@ -2,7 +2,7 @@
 #include "native.hpp"
 #include "chain.hpp"
 
-namespace dewox::inline string
+namespace dewox
 {
     inline namespace
     {
@@ -163,7 +163,7 @@ namespace dewox::inline string
     }
 }
 
-namespace dewox::inline writer
+namespace dewox
 {
     auto write(Chain* chain, String piece) -> void
     {

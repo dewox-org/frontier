@@ -1,6 +1,6 @@
 #include "slice.hpp"
 
-namespace dewox::inline slice
+namespace dewox
 {
     // Empty intentionally
 }

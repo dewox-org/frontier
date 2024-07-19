@@ -3,7 +3,7 @@
 #include "object.hpp"
 #include "native.hpp"
 
-namespace dewox::inline test
+namespace dewox
 {
     extern "C" auto dewox_site_test_map(Test* test) -> void
     {

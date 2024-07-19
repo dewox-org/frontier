@@ -1,7 +1,7 @@
 #pragma once
 #include "object.hpp"
 
-namespace dewox::inline list
+namespace dewox
 {
     #define DEWOX_LIST(STRUCT)  // Turn a structure into a bidirectional linked-list.
 
@@ -19,7 +19,7 @@ namespace dewox::inline list
     constexpr auto search_list(auto* first, auto* last, auto next, auto find_item) -> bool;  // -> found
 }
 
-namespace dewox::inline list
+namespace dewox
 {
     #undef DEWOX_LIST
     #define DEWOX_LIST(STRUCT)  STRUCT* back; STRUCT* next

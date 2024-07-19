@@ -3,7 +3,7 @@
 #include "object.hpp"
 #include "tool.hpp"
 
-namespace dewox::inline slice
+namespace dewox
 {
     template <mutable_type Item>
     struct Slice
@@ -26,7 +26,7 @@ namespace dewox::inline slice
     };
 }
 
-namespace dewox::inline slice
+namespace dewox
 {
     template <mutable_type Item>
     inline constexpr auto Slice<Item>::into(Slice* result, Item const* first, Item const* last) -> void

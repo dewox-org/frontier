@@ -1,7 +1,7 @@
 #pragma once
 #include "string.hpp"
 
-namespace dewox::inline site
+namespace dewox
 {
     struct Site
     {
@@ -18,7 +18,7 @@ namespace dewox::inline site
     extern "C" Site dewox_sites[];
 }
 
-namespace dewox::inline site
+namespace dewox
 {
     inline constexpr auto Site::into(Site* result, String key, void* value) -> void
     {

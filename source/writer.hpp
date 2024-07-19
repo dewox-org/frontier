@@ -1,11 +1,11 @@
 #pragma once
 
-namespace dewox::inline chain
+namespace dewox
 {
     struct Chain;
 }
 
-namespace dewox::inline writer
+namespace dewox
 {
     // Overload the "write()" function and write a piece into the chain for custom journal writes.
     // You must use the alignment of 0 (which is the default value).

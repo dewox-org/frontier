@@ -4,7 +4,7 @@
 #include "pool.hpp"
 #include "type.hpp"
 
-namespace dewox::inline map
+namespace dewox
 {
     using Find_Map_Key_Value = auto (Identity key, Identity value, void* maybe_data) -> bool;  // -> found
 

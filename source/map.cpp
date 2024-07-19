@@ -4,7 +4,7 @@
 #include "slice.hpp"
 #include "object.hpp"
 
-namespace dewox::inline map
+namespace dewox
 {
     inline namespace
     {

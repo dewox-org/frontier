@@ -1,7 +1,7 @@
 #include "journal.hpp"
 #include "native.hpp"
 
-namespace dewox::inline journal
+namespace dewox
 {
     auto dump(String maybe_text) -> void
     {
@@ -10,7 +10,7 @@ namespace dewox::inline journal
     }
 }
 
-namespace dewox::inline journal
+namespace dewox
 {
     thread_local Chain* maybe_journal_scratch{};
 }

@@ -4,7 +4,7 @@
 #include "type.hpp"
 #include "writer.hpp"
 
-namespace dewox::inline string
+namespace dewox
 {
     struct String
     {
@@ -51,7 +51,7 @@ namespace dewox::inline string
     constexpr auto operator != (String maybe_a, String maybe_b) -> bool;
 }
 
-namespace dewox::inline writer
+namespace dewox
 {
     auto write(Chain* chain, String piece) -> void;
 
@@ -59,17 +59,17 @@ namespace dewox::inline writer
     auto write(Chain* chain, char const (&piece)[byte_count]) -> void;
 }
 
-namespace dewox::inline string::literal
+namespace dewox::literal::inline string
 {
     constexpr auto operator ""_s (char const* first, Size byte_count) -> String;
 }
 
 namespace dewox
 {
-    using namespace ::dewox::string::literal;
+    using namespace ::dewox::literal::string;
 }
 
-namespace dewox::inline string
+namespace dewox
 {
     inline constexpr auto String::into(String* result, char const* first, char const* last) -> void
     {
@@ -145,7 +145,7 @@ namespace dewox::inline string
     }
 }
 
-namespace dewox::inline writer
+namespace dewox
 {
     template <Size byte_count>
     inline auto write(Chain* chain, char const (&piece)[byte_count]) -> void
@@ -154,7 +154,7 @@ namespace dewox::inline writer
     }
 }
 
-namespace dewox::inline string::literal
+namespace dewox::literal::inline string
 {
     inline constexpr auto operator ""_s (char const* native_string, Size byte_count) -> String
     {

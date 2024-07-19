@@ -6,7 +6,7 @@
 #include "type.hpp"
 #include "tool.hpp"
 
-namespace dewox::inline pool
+namespace dewox
 {
     struct Pool
     {
@@ -24,7 +24,7 @@ namespace dewox::inline pool
     };
 }
 
-namespace dewox::inline pool
+namespace dewox
 {
     template <mutable_type Item>
     inline auto Pool::item_into(Pool* result, Chain* chain) -> void

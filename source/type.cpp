@@ -1,6 +1,6 @@
 #include "type.hpp"
 
-namespace dewox::inline type
+namespace dewox
 {
     inline namespace
     {

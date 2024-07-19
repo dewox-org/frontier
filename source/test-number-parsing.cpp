@@ -5,7 +5,7 @@
 #include "journal.hpp"
 #include "native.hpp"
 
-namespace dewox::inline test
+namespace dewox
 {
     extern "C" auto dewox_site_test_number_parsing(Test* test) -> void
     {

@@ -3,7 +3,7 @@
 #include "string.hpp"
 #include "native.hpp"
 
-namespace dewox::inline tool
+namespace dewox
 {
     inline namespace
     {

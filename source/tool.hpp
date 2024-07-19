@@ -1,6 +1,6 @@
 #pragma once
 
-namespace dewox::inline tool
+namespace dewox
 {
     using Traceable = auto (void* maybe_data, char const* maybe_message, char const* file, int line, char const* function) -> bool;
     auto trace(char const* maybe_message = {}, char const* file = __builtin_FILE(), int line = __builtin_LINE(), char const* function = __builtin_FUNCTION()) -> void;
@@ -24,7 +24,7 @@ namespace dewox::inline tool
     constexpr auto transmute(Source source) -> Target;
 }
 
-namespace dewox::inline tool
+namespace dewox
 {
     inline constexpr auto min(auto a, decltype(a) b) -> decltype(a) { return (a < b ? a : b); }
     inline constexpr auto max(auto a, decltype(a) b) -> decltype(a) { return (a > b ? a : b); }

@@ -3,7 +3,7 @@
 #include "chain.hpp"
 #include "tool.hpp"
 
-namespace dewox::inline journal
+namespace dewox
 {
     auto format(auto... pieces) -> String;
     auto format_native(auto... pieces) -> char const*;
@@ -12,14 +12,14 @@ namespace dewox::inline journal
     auto print(auto... pieces) -> void;
 }
 
-namespace dewox::inline journal
+namespace dewox
 {
     auto use_journal(Chain** do_maybe_chain) -> void;
     auto try_journal_scratch() -> Chain*;
     auto do_format(Chain* scratch, auto... pieces) -> String;
 }
 
-namespace dewox::inline journal
+namespace dewox
 {
     inline auto format(auto... pieces) -> String
     {
@@ -49,7 +49,7 @@ namespace dewox::inline journal
     }
 }
 
-namespace dewox::inline journal
+namespace dewox
 {
     extern thread_local Chain* maybe_journal_scratch;
 
@@ -66,7 +66,7 @@ namespace dewox::inline journal
     inline auto do_format(Chain* chain, auto... pieces) -> String
     {
         auto byte_count_before_writing = chain->byte_count();
-        (::dewox::writer::write(chain, pieces), ...);
+        (::dewox::write(chain, pieces), ...);
         auto byte_count_after_writing = chain->byte_count();
         // [invariant] byte_count_after_writing >= byte_count_before_writing;
         auto byte_count_written = byte_count_after_writing - byte_count_before_writing;

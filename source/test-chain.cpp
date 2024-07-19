@@ -3,7 +3,7 @@
 #include "object.hpp"
 #include "native.hpp"
 
-namespace dewox::inline test
+namespace dewox
 {
     inline namespace
     {

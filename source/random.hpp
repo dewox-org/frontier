@@ -1,7 +1,7 @@
 #pragma once
 #include "type.hpp"
 
-namespace dewox::inline random
+namespace dewox
 {
     auto random_identity(Identity* seed) -> Identity;  // [0, 1 << 64).
     auto random_float32(Identity* seed) -> float;      // [0, 1).

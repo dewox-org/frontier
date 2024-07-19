@@ -1,6 +1,6 @@
 #include "site.hpp"
 
-namespace dewox::inline site
+namespace dewox
 {
     auto search_sites(Find_Site* find, void* maybe_data) -> bool
     {

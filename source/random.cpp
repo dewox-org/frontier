@@ -1,7 +1,7 @@
 #include "random.hpp"
 #include "hash.hpp"
 
-namespace dewox::inline random
+namespace dewox
 {
     inline namespace
     {

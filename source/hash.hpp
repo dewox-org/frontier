@@ -1,7 +1,7 @@
 #pragma once
 #include "type.hpp"
 
-namespace dewox::inline hash
+namespace dewox
 {
     using Hash = Identity;
 

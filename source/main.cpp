@@ -2,7 +2,7 @@
 #include "tool.hpp"
 #include "native.hpp"
 
-namespace dewox::inline main
+namespace dewox
 {
     auto run() -> int
     {
@@ -15,7 +15,7 @@ namespace dewox::inline main
 auto main() -> int
 {
     ::dewox::native::load();
-    auto result = ::dewox::main::run();
+    auto result = ::dewox::run();
     ::dewox::native::unload();
     return result;
 }

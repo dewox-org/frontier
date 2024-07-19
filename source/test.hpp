@@ -1,7 +1,7 @@
 #pragma once
 #include "type.hpp"
 
-namespace dewox::inline test
+namespace dewox
 {
     extern "C"
     struct Test

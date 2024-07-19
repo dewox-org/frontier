@@ -4,7 +4,7 @@
 #include "object.hpp"
 #include "native.hpp"
 
-namespace dewox::inline writer
+namespace dewox
 {
     auto write(Chain* chain, char piece) -> void
     {

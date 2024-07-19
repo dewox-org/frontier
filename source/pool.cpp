@@ -2,7 +2,7 @@
 #include "tool.hpp"
 #include "object.hpp"
 
-namespace dewox::inline pool
+namespace dewox
 {
     inline namespace
     {

@@ -6,7 +6,7 @@
 #include "list.hpp"
 #include "native.hpp"
 
-namespace dewox::inline chain
+namespace dewox
 {
     inline namespace
     {

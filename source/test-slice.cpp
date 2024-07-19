@@ -2,7 +2,7 @@
 #include "slice.hpp"
 #include "object.hpp"
 
-namespace dewox::inline test
+namespace dewox
 {
     extern "C" auto dewox_site_test_slice(Test* test) -> void
     {
