@@ -102,10 +102,10 @@ namespace dewox
     inline constexpr auto String::byte_count() -> Size { return Size(last - first); }
     inline constexpr String::operator bool () { return (last > first); }
 
-    inline constexpr auto String::prefix(Size prefix_byte_count) -> String { return create(into, first, first + prefix_byte_count); }
-    inline constexpr auto String::suffix(Size suffix_byte_count) -> String { return create(into, last - suffix_byte_count, last); }
-    inline constexpr auto String::skip(Size prefix_byte_count) -> String { return create(into, first + prefix_byte_count, last); }
-    inline constexpr auto String::pop(Size suffix_byte_count) -> String { return create(into, first, last - suffix_byte_count); }
+    inline constexpr auto String::prefix(Size prefix_byte_count) -> String { return create(&into, first, first + prefix_byte_count); }
+    inline constexpr auto String::suffix(Size suffix_byte_count) -> String { return create(&into, last - suffix_byte_count, last); }
+    inline constexpr auto String::skip(Size prefix_byte_count) -> String { return create(&into, first + prefix_byte_count, last); }
+    inline constexpr auto String::pop(Size suffix_byte_count) -> String { return create(&into, first, last - suffix_byte_count); }
 
     inline constexpr auto String::starts_with(String maybe_prefix) -> bool { return (prefix(min(byte_count(), maybe_prefix.byte_count())) == maybe_prefix); }
     inline constexpr auto String::ends_with(String maybe_suffix) -> bool { return (suffix(min(byte_count(), maybe_suffix.byte_count())) == maybe_suffix); }

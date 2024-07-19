@@ -85,7 +85,7 @@ namespace dewox
                         trace("@");
                         command += 2u;
                         if (auto next_subpattern = try_find_subpattern(command[-1], subpattern)) {
-                            auto s = create(String::into, peek, source->end());
+                            auto s = create(&String::into, peek, source->end());
                             if (do_match(&s, pattern, next_subpattern)) {
                                 peek = s.begin();
                             } else {
